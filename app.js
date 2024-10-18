@@ -141,4 +141,123 @@ function displayChart(avgCO2ByYear) {
         window.co2Chart.destroy();
     }
 
-    const years 
+    const years = Object.keys(avgCO2ByYear);
+    const avgCO2Values = years.map(year => avgCO2ByYear[year]);
+
+    // Replace null values with NaN to prevent charting issues
+    const avgCO2ValuesCleaned = avgCO2Values.map(value => value !== null ? value : NaN);
+
+    window.co2Chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: years,
+            datasets: [{
+                label: 'Average CO₂ Levels (ppm)',
+                data: avgCO2ValuesCleaned,
+                backgroundColor: ['rgba(54, 162, 235, 0.5)', 'rgba(255, 99, 132, 0.5)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                borderWidth: 1,
+            }],
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'CO₂ Levels (ppm)',
+                    },
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Year',
+                    },
+                },
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed.y;
+                            return isNaN(value) ? 'No data available' : `Average CO₂: ${value.toFixed(2)} ppm`;
+                        },
+                    },
+                },
+            },
+        },
+    });
+}
+
+// Plot data overlays on the map
+function plotDataOverlays(points) {
+    // Clear any existing data layers
+    if (window.dataLayer) {
+        map.removeLayer(window.dataLayer);
+    }
+
+    // Create a layer group for the data points
+    window.dataLayer = L.layerGroup();
+
+    // Add data points to the layer
+    points.forEach(feature => {
+        const lat = feature.geometry.coordinates[1];
+        const lon = feature.geometry.coordinates[0];
+        const co2Value = feature.properties.co2;
+        const year = feature.properties.year;
+
+        // Determine color based on year
+        let color;
+        if (year == 2019) {
+            color = 'blue';
+        } else if (year == 2023) {
+            color = 'red';
+        } else {
+            color = 'gray';
+        }
+
+        // Create a circle marker
+        const marker = L.circleMarker([lat, lon], {
+            radius: 5,
+            fillColor: color,
+            color: color,
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8,
+        }).bindPopup(`Year: ${year}<br>CO₂: ${co2Value.toFixed(2)} ppm`);
+
+        window.dataLayer.addLayer(marker);
+    });
+
+    // Add the data layer to the map
+    window.dataLayer.addTo(map);
+}
+
+// Add legend to the map
+function addLegend() {
+    const legend = L.control({ position: 'bottomright' });
+
+    legend.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'info legend');
+        const categories = ['2019', '2023'];
+
+        const colors = {
+            '2019': 'blue',
+            '2023': 'red',
+        };
+
+        div.innerHTML = '<strong>Year</strong><br>';
+        for (let i = 0; i < categories.length; i++) {
+            div.innerHTML +=
+                `<i style="background:${colors[categories[i]]}; width: 18px; height: 18px; display: inline-block;"></i> ${categories[i]}<br>`;
+        }
+        return div;
+    };
+
+    legend.addTo(map);
+}
+
+// Initialize everything after the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    loadAllCO2Data(initMap);
+});
