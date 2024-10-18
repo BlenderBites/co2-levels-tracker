@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CO₂ Levels Tracker</title>
+    <meta charset="UTF-8">
+    <!-- Load Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Load Leaflet Draw CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <style>
+        /* Map and UI styles */
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+        #chartContainer {
+            width: 80%;
+            margin: 20px auto;
+        }
+        /* Legend styles */
+        .legend {
+            background-color: white;
+            padding: 6px 8px;
+            font: 14px Arial, Helvetica, sans-serif;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            line-height: 24px;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+        /* Optional: Style for the chart canvas */
+        #co2Chart {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CO₂ Levels Tracker</h1>
+    <!-- Map container -->
+    <div id="map"></div>
+    <!-- Chart container -->
+    <div id="chartContainer">
+        <canvas id="co2Chart"></canvas>
+    </div>
+    <!-- Include Scripts at the end of the body -->
+    <!-- Load Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Load Leaflet Draw JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <!-- Load Chart.js version 3.9.1 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+    <!-- Load PapaParse for CSV parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.1/papaparse.min.js"></script>
+    <!-- Load Turf.js for spatial analysis -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <!-- Your JavaScript code -->
+    <script src="app.js"></sc
